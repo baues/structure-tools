@@ -1,7 +1,7 @@
 const EQ = 0.01; // cm to m
 const BETA = 1 / 4;
 const M = 100;
-const T_TOTAL = 3;
+const T_TOTAL = 4;
 
 export function spectrum(acceleration: number[], h: number, dt = 0.02, dtPrecision = 0.1) {
   const acc0 = acceleration.map(a => EQ * a);
@@ -37,9 +37,9 @@ export function spectrum(acceleration: number[], h: number, dt = 0.02, dtPrecisi
     }
 
     period = period.concat(t);
-    accMax = accMax.concat(Math.max(...acc.map(a => Math.abs(a))));
-    velMax = velMax.concat(Math.max(...vel.map(v => Math.abs(v))));
-    disMax = disMax.concat(Math.max(...dis.map(d => Math.abs(d))));
+    accMax = accMax.concat(Math.max(...acc.map(a => Math.abs(a) / EQ)));
+    velMax = velMax.concat(Math.max(...vel.map(v => Math.abs(v) / EQ)));
+    disMax = disMax.concat(Math.max(...dis.map(d => Math.abs(d) / EQ)));
   }
 
   return [period, accMax, velMax, disMax];

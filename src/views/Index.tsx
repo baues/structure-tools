@@ -56,16 +56,27 @@ const createData = (label = '', data = [], labels = []) => {
   };
 };
 
-const options = {
-  scales: {
-    xAxes: [
-      {
+const options = (xTitle = '', yTitle = '') => {
+  return {
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: xTitle,
+        },
         ticks: {
           beginAtZero: true,
         },
       },
-    ],
-  },
+      y: {
+        display: true,
+        title: {
+          display: true,
+          text: yTitle,
+        },
+      },
+    },
+  };
 };
 
 export default function Index() {
@@ -129,22 +140,23 @@ export default function Index() {
   }, [input, f]);
 
   useEffect(() => {
-    setAccData(createData('Response Acceleration', acc, period));
+    setAccData(createData('Acceleration', acc, period));
   }, [acc, period]);
 
   useEffect(() => {
-    setVelData(createData('Response Velocity', vel, period));
+    setVelData(createData('Velocity', vel, period));
   }, [vel, period]);
 
   useEffect(() => {
-    setDisData(createData('Response Displacement', dis, period));
+    setDisData(createData('Displacement', dis, period));
   }, [dis, period]);
 
   return (
-    <Container maxWidth="md" className={classes.root}>
+    <Container maxWidth="md" className={classes.root} disableGutters>
+      <Typography component="h1">応答スペクトルの計算</Typography>
       <form className={classes.form} autoComplete="off">
-        <TextField id="damping-ratio" label="減衰定数" type="number" required value={h} onChange={(e) => setH(Number(e.target.value))} />
-        <TextField id="sampling-freq" label="入力加速度のサンプリング振動数" type="number" required value={f} onChange={(e) => setF(Number(e.target.value))} />
+        <TextField id="damping-ratio" label="減衰定数[-]" type="number" required value={h} onChange={(e) => setH(Number(e.target.value))} />
+        <TextField id="sampling-freq" label="入力波振動数[Hz]" helperText="= 1 / 入力波刻み時間[s]" type="number" required value={f} onChange={(e) => setF(Number(e.target.value))} />
         <Button variant="outlined" component="label" onClick={(e) => fileInput.current && fileInput.current.click()}>
           加速度データ(CSV)をアップロード
           <input type="file" accept=".csv" hidden required onChange={handleFileInput} />
@@ -156,7 +168,7 @@ export default function Index() {
       <Link href="/Sample.csv" style={{ textDecoration: 'none' }}>
         <Button variant="outlined">サンプルデータダウンロード</Button>
       </Link>
-      <Typography>入力加速度</Typography>
+      <Typography>入力加速度[cm/s2]</Typography>
       <Paper className={classes.input}>
         {input.map((v, i) => {
           return (
@@ -166,10 +178,10 @@ export default function Index() {
           );
         })}
       </Paper>
-      {input.length > 0 && <Line id="input" type="line" data={inputData} options={options} />}
-      {acc.length > 0 && <Line id="acc" type="line" data={accData} options={options} />}
-      {vel.length > 0 && <Line id="vel" type="line" data={velData} options={options} />}
-      {dis.length > 0 && <Line id="dis" type="line" data={disData} options={options} />}
+      {input.length > 0 && <Line id="input" type="line" data={inputData} options={options('Time[s]', 'Acceleration[cm/s2]')} />}
+      {acc.length > 0 && <Line id="acc" type="line" data={accData} options={options('Period[s]', 'Response Absolute Acceleration[cm/s2]')} />}
+      {vel.length > 0 && <Line id="vel" type="line" data={velData} options={options('Period[s]', 'Response Velocity[cm/s]')} />}
+      {dis.length > 0 && <Line id="dis" type="line" data={disData} options={options('Period[s]', 'Response Displacement[cm]')} />}
       <Snackbar
         anchorOrigin={{
           vertical: 'bottom',
