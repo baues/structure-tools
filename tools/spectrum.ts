@@ -1,7 +1,8 @@
 const EQ = 0.01;  // cm to m
 const BETA = 1 / 4;
 const M = 100;
-const T_TOTAL = 1;
+const DT_TOTAL = 1;
+const T_TOTAL = 0.1;
 
 export function spectrum(acceleration: number[], h: number, dt = 0.02) {
   const acc0 = acceleration.map(a => EQ * a);
@@ -18,7 +19,7 @@ export function spectrum(acceleration: number[], h: number, dt = 0.02) {
   let disMax: number[] = [];
   let period: number[] = [];
 
-  for (let i = 1; i <= T_TOTAL / dt; i++) {
+  for (let i = 1; i <= T_TOTAL / DT_TOTAL; i++) {
     const t = 0.01 * i;
     const k = 4 * Math.PI ** 2 * M / t ** 2;
     const c = 2 * h * Math.sqrt(k * M);

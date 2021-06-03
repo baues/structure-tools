@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     acc: {
-      maxHeight: 500,
+      maxHeight: 300,
       overflow: "auto",
     },
   }),
@@ -63,7 +63,7 @@ export default function Index() {
     d3.csv(objectURL, async (row) => {
       dataList = dataList.concat(...Object.values(row).map(v => Number(v)));
     }).then(() => {
-      console.log(dataList);
+      console.log("data", dataList);
       if (dataList.some(isNaN)) {
         window.alert("数字のみのデータをインプットしてください")
       } else {
