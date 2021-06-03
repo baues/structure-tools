@@ -1,0 +1,6 @@
+/Users/kakemotokeita/emsdk/emsdk activate latest
+source /Users/kakemotokeita/emsdk/emsdk_env.sh
+
+emcc hello4.cpp -O3 -s EXPORTED_FUNCTIONS='["_test","_malloc","_free"]' -s EXPORTED_RUNTIME_METHODS='["ccall","cwrap"]'
+
+python -m http.server

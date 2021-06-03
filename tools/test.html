@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+    <title>Test!!</title>
+  </head>
+  <body>
+    <button class="mybutton">Run myFunction</button>
+    <script>
+      document.querySelector('.mybutton').addEventListener('click', function () {
+        const res = ccallArrays('test', 'array', ['array'], [[1.2, 2, 3, 4, 5]], { returnArraySize: 5 });
+        console.log(res); // [2,4,6,8,10]
+      });
+    </script>
+    <script async src="a.out.js"></script>
+    <script async src="ccallArrays.js"></script>
+  </body>
+</html>
