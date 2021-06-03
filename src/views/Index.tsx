@@ -8,10 +8,13 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';
 import Snackbar from '@material-ui/core/Snackbar';
+import Fab from '@material-ui/core/Fab';
+import EditIcon from '@material-ui/icons/Edit';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import { Line } from 'react-chartjs-2';
 import { spectrum } from 'tools/spectrum';
+import LinkIconButton from 'src/components/LinkIconButton';
 
 const DT_PRECISION = 0.05;
 
@@ -31,6 +34,11 @@ const useStyles = makeStyles((theme: Theme) =>
       height: 200,
       overflow: 'auto',
       padding: theme.spacing(1),
+    },
+    fab: {
+      position: 'fixed',
+      right: theme.spacing(2),
+      bottom: theme.spacing(2),
     },
   }),
 );
@@ -178,6 +186,11 @@ export default function Index() {
           </IconButton>
         }
       />
+      <Link className={classes.fab} href="https://github.com/baues/structure-tools" target="_blank" rel="noopener noreferrer">
+        <Fab aria-label="edit">
+          <EditIcon />
+        </Fab>
+      </Link>
     </Container>
   );
 }
