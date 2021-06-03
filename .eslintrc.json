@@ -22,7 +22,38 @@
         "@typescript-eslint"
     ],
     "rules": {
+        "require-jsdoc": 0,
+        "max-len": ["error", { "code": 200 }],
+        "semi": [2, "always"],
+        "space-before-function-paren": 0,
+        "comma-dangle": ["error", "always-multiline"],
+        "no-case-declarations": "off",
+        "quote-props": 0,
+        "react/display-name": ["off", { "ignoreTranspilerName": false }],
         "react-hooks/rules-of-hooks": "error",
-        "react-hooks/exhaustive-deps": "warn"
-    }
+        "react-hooks/exhaustive-deps": "warn",
+        "no-use-before-define": "off"
+    },
+    "overrides": [
+        {
+          "files": ["*.ts", "*.tsx"],
+          "extends": ["plugin:@typescript-eslint/recommended"],
+          "parser": "@typescript-eslint/parser",
+          "plugins": ["@typescript-eslint"],
+          "rules": {
+            "no-empty-function": "off",
+            "@typescript-eslint/no-empty-function": "warn",
+            "@typescript-eslint/no-this-alias": [
+              "error",
+              {
+                "allowDestructuring": true,
+                "allowedNames": ["scope"]
+              }
+            ],
+            "@typescript-eslint/no-non-null-assertion": "off",
+            "@typescript-eslint/no-use-before-define": ["error"],
+            "@typescript-eslint/ban-ts-comment": "warn"
+          }
+        }
+      ]
 }

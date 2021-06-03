@@ -1,29 +1,26 @@
-const EQ = 0.01;  // cm to m
+const EQ = 0.01; // cm to m
 const BETA = 1 / 4;
 const M = 100;
-const DT_TOTAL = 1;
-const T_TOTAL = 0.1;
+const T_TOTAL = 3;
 
-export function spectrum(acceleration: number[], h: number, dt = 0.02) {
+export function spectrum(acceleration: number[], h: number, dt = 0.02, dtPrecision = 0.1) {
   const acc0 = acceleration.map(a => EQ * a);
-
   const f = acc0.map(a => -M * a);
-  let dis1 = 0;
-  let vel1 = 0;
-  let acc1 = 0;
-  let acc: number[] = [];
-  let vel: number[] = [];
-  let dis: number[] = [];
   let accMax: number[] = [];
   let velMax: number[] = [];
   let disMax: number[] = [];
   let period: number[] = [];
 
-  for (let i = 1; i <= T_TOTAL / DT_TOTAL; i++) {
-    const t = 0.01 * i;
+  for (let i = 1; i <= T_TOTAL / dtPrecision; i++) {
+    let dis1 = 0;
+    let vel1 = 0;
+    let acc1 = 0;
+    let acc: number[] = [];
+    let vel: number[] = [];
+    let dis: number[] = [];
+    const t = dtPrecision * i;
     const k = 4 * Math.PI ** 2 * M / t ** 2;
     const c = 2 * h * Math.sqrt(k * M);
-    console.log(t);
 
     for (let j = 0; j < acc0.length; j++) {
       const acc2 = (f[j] - c * (vel1 + 0.5 * dt * acc1) - k * (dis1 + dt * vel1 + (0.5 - BETA) * dt * dt * acc1)) / (M + c * 0.5 * dt + k * BETA * dt * dt);
