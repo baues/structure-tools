@@ -75,6 +75,7 @@ export default function Index() {
   const handleSubmit = () => {
     console.log(h, f, acc);
     const [period, accMax, velMax, disMax] = spectrum(acc, h, 1 / f);
+    console.log(period, accMax);
   };
 
   useEffect(() => {

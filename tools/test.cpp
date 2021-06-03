@@ -1,12 +1,13 @@
 #include <stdio.h>
 #include <vector>
 #include <stdlib.h>
+#include <emscripten/emscripten.h>
 
 using namespace std;
 
 extern "C"
 {
-    double *test(double *buf, int bufSize)
+    double* EMSCRIPTEN_KEEPALIVE test(double *buf, int bufSize)
     {
 
         double values[bufSize];

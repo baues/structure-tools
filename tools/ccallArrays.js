@@ -1,4 +1,4 @@
-const ccallArrays = (func, returnType, paramTypes=[], params, {heapIn="HEAPF64", heapOut="HEAPF64", returnArraySize=1}={}) => {
+const ccallArrays = (func, returnType, paramTypes = [], params, { heapIn = "HEAPF64", heapOut = "HEAPF64", returnArraySize = 1 } = {}) => {
 
     const heapMap = {}
     heapMap.HEAP8 = Int8Array // int8_t
@@ -12,20 +12,20 @@ const ccallArrays = (func, returnType, paramTypes=[], params, {heapIn="HEAPF64",
 
     let res
     let error
-    const returnTypeParam = returnType=="array" ? "number" : returnType
+    const returnTypeParam = returnType == "array" ? "number" : returnType
     const parameters = []
     const parameterTypes = []
     const bufs = []
 
     try {
         if (params) {
-            for (let p=0; p<params.length; p++) {
+            for (let p = 0; p < params.length; p++) {
 
                 if (paramTypes[p] == "array" || Array.isArray(params[p])) {
 
                     const typedArray = new heapMap[heapIn](params[p].length)
 
-                    for (let i=0; i<params[p].length; i++) {
+                    for (let i = 0; i < params[p].length; i++) {
                         typedArray[i] = params[p][i]
                     }
 
@@ -46,35 +46,36 @@ const ccallArrays = (func, returnType, paramTypes=[], params, {heapIn="HEAPF64",
                             break
                     }
 
-                    bufs.push(buf)
-                    parameters.push(buf)
-                    parameters.push(params[p].length)
-                    parameterTypes.push("number")
-                    parameterTypes.push("number")
+                    bufs.push(buf);
+                    parameters.push(buf);
+                    parameters.push(params[p].length);
+                    parameterTypes.push("number");
+                    parameterTypes.push("number");
 
                 } else {
-                    parameters.push(params[p])
-                    parameterTypes.push(paramTypes[p]==undefined ? "number" : paramTypes[p])
+                    parameters.push(params[p]);
+                    parameterTypes.push(paramTypes[p] == undefined ? "number" : paramTypes[p]);
                 }
             }
         }
 
+        console.log(returnTypeParam, parameterTypes, parameters);
         res = Module.ccall(func, returnTypeParam, parameterTypes, parameters)
     } catch (e) {
         error = e
     } finally {
-        for (let b=0; b<bufs.length; b++) {
+        for (let b = 0; b < bufs.length; b++) {
             Module._free(bufs[b])
         }
     }
 
     if (error) throw error
 
-    if (returnType=="array") {
+    if (returnType == "array") {
         const returnData = []
 
-        for (let v=0; v<returnArraySize; v++) {
-            returnData.push(Module[heapOut][res/heapMap[heapOut].BYTES_PER_ELEMENT+v])
+        for (let v = 0; v < 2000; /*returnArraySize*/ v++) {
+            returnData.push(Module[heapOut][res / heapMap[heapOut].BYTES_PER_ELEMENT + v])
         }
 
         return returnData

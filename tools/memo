@@ -4,3 +4,9 @@ source /Users/kakemotokeita/emsdk/emsdk_env.sh
 emcc hello4.cpp -O3 -s EXPORTED_FUNCTIONS='["_test","_malloc","_free"]' -s EXPORTED_RUNTIME_METHODS='["ccall","cwrap"]'
 
 python -m http.server
+
+windows
+
+emsdk/upstream/emccで、
+
+emcc C:\Users\Kakemoto\App\BAUES\structure-tools\tools\spectrum.cpp -O3 -s EXPORTED_FUNCTIONS='["_test","_malloc","_free"]' -s EXPORTED_RUNTIME_METHODS='["ccall","cwrap"]' (-s ALLOW_MEMORY_GROWTH -s TOTAL_MEMORY=1024mb)
