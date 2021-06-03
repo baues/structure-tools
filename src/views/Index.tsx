@@ -153,9 +153,9 @@ export default function Index() {
           計算
         </Button>
       </form>
-      <Button variant="outlined">
-        <Link href="/Sample.csv">サンプルデータダウンロード</Link>
-      </Button>
+      <Link href="/Sample.csv" style={{ textDecoration: 'none' }}>
+        <Button variant="outlined">サンプルデータダウンロード</Button>
+      </Link>
       <Typography>入力加速度</Typography>
       <Paper className={classes.input}>
         {input.map((v, i) => {
