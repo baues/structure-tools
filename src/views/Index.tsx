@@ -14,7 +14,6 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import { Line } from 'react-chartjs-2';
 import { spectrum } from 'tools/spectrum';
-import LinkIconButton from 'src/components/LinkIconButton';
 
 const DT_PRECISION = 0.05;
 
@@ -145,7 +144,7 @@ export default function Index() {
     <Container maxWidth="md" className={classes.root}>
       <form className={classes.form} autoComplete="off">
         <TextField id="damping-ratio" label="減衰定数" type="number" required value={h} onChange={(e) => setH(Number(e.target.value))} />
-        <TextField id="sampling-freq" label="サンプル振動数" type="number" required value={f} onChange={(e) => setF(Number(e.target.value))} />
+        <TextField id="sampling-freq" label="入力加速度のサンプリング振動数" type="number" required value={f} onChange={(e) => setF(Number(e.target.value))} />
         <Button variant="outlined" component="label" onClick={(e) => fileInput.current && fileInput.current.click()}>
           加速度データ(CSV)をアップロード
           <input type="file" accept=".csv" hidden required onChange={handleFileInput} />
