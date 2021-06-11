@@ -9,11 +9,12 @@ import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';
 import Snackbar from '@material-ui/core/Snackbar';
 import Fab from '@material-ui/core/Fab';
+import LinearProgress from '@material-ui/core/LinearProgress';
 import EditIcon from '@material-ui/icons/Edit';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import { Line } from 'react-chartjs-2';
-import { spectrum } from 'tools/spectrum';
+import { useSpectrum } from 'src/hooks/useSpectrum';
 
 const DT_PRECISION = 0.05;
 
@@ -36,8 +37,8 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     fab: {
       position: 'fixed',
-      right: theme.spacing(2),
-      bottom: theme.spacing(2),
+      right: theme.spacing(1),
+      bottom: theme.spacing(1),
     },
   }),
 );
@@ -93,6 +94,7 @@ export default function Index() {
   const [velData, setVelData] = useState(createData('Response Velocity'));
   const [disData, setDisData] = useState(createData('Response Displacement'));
   const [open, setOpen] = React.useState(false);
+  const { calc, calculating, results } = useSpectrum();
 
   const handleClose = (event: React.SyntheticEvent | React.MouseEvent, reason?: string) => {
     if (reason === 'clickaway') {
@@ -121,13 +123,18 @@ export default function Index() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const [period, accMax, velMax, disMax] = spectrum(input, h, 1 / f, DT_PRECISION);
-    setPeriod(period.map((p) => Number(p.toFixed(1))));
-    setAcc(accMax);
-    setVel(velMax);
-    setDis(disMax);
-    setOpen(true);
+    calc({ acceleration: input, h, dt: 1 / f, dtPrecision: DT_PRECISION });
   };
+
+  useEffect(() => {
+    if (results[0] && results[0].length > 0) {
+      setPeriod(results[0].map((p) => Number(p.toFixed(1))));
+      setAcc(results[1]);
+      setVel(results[2]);
+      setDis(results[3]);
+      setOpen(true);
+    }
+  }, [results]);
 
   useEffect(() => {
     setInputData(
@@ -152,56 +159,59 @@ export default function Index() {
   }, [dis, period]);
 
   return (
-    <Container maxWidth="md" className={classes.root} disableGutters>
-      <Typography component="h1">応答スペクトルの計算</Typography>
-      <form className={classes.form} autoComplete="off">
-        <TextField id="damping-ratio" label="減衰定数[-]" type="number" required value={h} onChange={(e) => setH(Number(e.target.value))} />
-        <TextField id="sampling-freq" label="入力波振動数[Hz]" helperText="= 1 / 入力波刻み時間[s]" type="number" required value={f} onChange={(e) => setF(Number(e.target.value))} />
-        <Button variant="outlined" component="label" onClick={(e) => fileInput.current && fileInput.current.click()}>
-          加速度データ(CSV)をアップロード
-          <input type="file" accept=".csv" hidden required onChange={handleFileInput} />
-        </Button>
-        <Button variant="contained" onClick={handleSubmit}>
-          計算
-        </Button>
-      </form>
-      <Link href="/Sample.csv" style={{ textDecoration: 'none' }}>
-        <Button variant="outlined">サンプルデータダウンロード</Button>
-      </Link>
-      <Typography>入力加速度[cm/s2]</Typography>
-      <Paper className={classes.input}>
-        {input.map((v, i) => {
-          return (
-            <div key={i}>
-              {i + 1}: {v}
-            </div>
-          );
-        })}
-      </Paper>
-      {input.length > 0 && <Line id="input" type="line" data={inputData} options={options('Time[s]', 'Acceleration[cm/s2]')} />}
-      {acc.length > 0 && <Line id="acc" type="line" data={accData} options={options('Period[s]', 'Response Absolute Acceleration[cm/s2]')} />}
-      {vel.length > 0 && <Line id="vel" type="line" data={velData} options={options('Period[s]', 'Response Velocity[cm/s]')} />}
-      {dis.length > 0 && <Line id="dis" type="line" data={disData} options={options('Period[s]', 'Response Displacement[cm]')} />}
-      <Snackbar
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
-        open={open}
-        autoHideDuration={6000}
-        onClose={handleClose}
-        message="計算終了"
-        action={
-          <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
-            <CloseIcon fontSize="small" />
-          </IconButton>
-        }
-      />
-      <Link className={classes.fab} href="https://github.com/baues/structure-tools" target="_blank" rel="noopener noreferrer">
-        <Fab aria-label="edit">
-          <EditIcon />
-        </Fab>
-      </Link>
-    </Container>
+    <>
+      {calculating && <LinearProgress color='secondary' />}
+      <Container maxWidth="md" className={classes.root} disableGutters>
+        <Typography component="h1">応答スペクトルの計算</Typography>
+        <form className={classes.form} autoComplete="off">
+          <TextField id="damping-ratio" label="減衰定数[-]" type="number" required value={h} onChange={(e) => setH(Number(e.target.value))} />
+          <TextField id="sampling-freq" label="入力波振動数[Hz]" helperText="= 1 / 入力波刻み時間[s]" type="number" required value={f} onChange={(e) => setF(Number(e.target.value))} />
+          <Button variant="outlined" component="label" onClick={(e) => fileInput.current && fileInput.current.click()}>
+            加速度データ(CSV)をアップロード
+            <input type="file" accept=".csv" hidden required onChange={handleFileInput} />
+          </Button>
+          <Button variant="contained" onClick={handleSubmit}>
+            計算
+          </Button>
+        </form>
+        <Link href="/Sample.csv" style={{ textDecoration: 'none' }}>
+          <Button variant="outlined">サンプルデータダウンロード</Button>
+        </Link>
+        <Typography>入力加速度[cm/s2]</Typography>
+        <Paper className={classes.input}>
+          {input.map((v, i) => {
+            return (
+              <div key={i}>
+                {i + 1}: {v}
+              </div>
+            );
+          })}
+        </Paper>
+        {input.length > 0 && <Line id="input" type="line" data={inputData} options={options('Time[s]', 'Acceleration[cm/s2]')} />}
+        {acc.length > 0 && <Line id="acc" type="line" data={accData} options={options('Period[s]', 'Response Absolute Acceleration[cm/s2]')} />}
+        {vel.length > 0 && <Line id="vel" type="line" data={velData} options={options('Period[s]', 'Response Velocity[cm/s]')} />}
+        {dis.length > 0 && <Line id="dis" type="line" data={disData} options={options('Period[s]', 'Response Displacement[cm]')} />}
+        <Snackbar
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+          open={open}
+          autoHideDuration={6000}
+          onClose={handleClose}
+          message="計算終了"
+          action={
+            <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
+              <CloseIcon fontSize="small" />
+            </IconButton>
+          }
+        />
+        <Link className={classes.fab} href="https://github.com/baues/structure-tools" target="_blank" rel="noopener noreferrer">
+          <Fab aria-label="edit">
+            <EditIcon />
+          </Fab>
+        </Link>
+      </Container>
+    </>
   );
 }

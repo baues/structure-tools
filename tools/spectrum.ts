@@ -3,7 +3,14 @@ const BETA = 1 / 4;
 const M = 100;
 const T_TOTAL = 4;
 
-export function spectrum(acceleration: number[], h: number, dt = 0.02, dtPrecision = 0.1) {
+export interface SpectrumArgs {
+  acceleration: number[];
+  h: number;
+  dt?: number;
+  dtPrecision?: number;
+}
+
+export function spectrum({ acceleration, h, dt = 0.02, dtPrecision = 0.1 }: SpectrumArgs): number[][] {
   const acc0 = acceleration.map(a => EQ * a);
   const f = acc0.map(a => -M * a);
   let accMax: number[] = [];
